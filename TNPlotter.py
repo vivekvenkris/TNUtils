@@ -71,8 +71,12 @@ names = {
 #rc('text.latex', preamble='\\\\usepackage{amsmath},\\\\usepackage{amssymb},\\\\usepackage{bm}')
 
 rcParams["axes.labelpad"] = 6
-rcParams["axes.formatter.limits"] = [-2,2]
+rcParams["axes.formatter.limits"] = [-3,3]
 rcParams['axes.unicode_minus'] = False
+rcParams['font.family'] = 'serif'
+rcParams['font.sans-serif'] = ['Helvetica']
+
+import matplotlib.pyplot as plt
 
 parser = argparse.ArgumentParser(description='Plot TN output posterior distributions')
 
@@ -155,15 +159,6 @@ else:
             if name in col_names:
                 m = float(chunks[-2])
                 s = float(chunks[-1])
-                # if len(chunks) == 3:
-                #     m = float(chunks[1])
-                #     s = float(chunks[2])
-                # elif len(chunks) == 4:
-                #     m = float(chunks[2])
-                #     s= float(chunks[3])
-
-                # else:
-                #     print ("invalid chunk:",chunks)
 
                 index = col_names.index(name)
 
@@ -197,11 +192,23 @@ else:
         print(c.analysis.get_latex_table())
 
     params = col_names
-
-    cc.configure(max_ticks=3,colors='#D32F2F', tick_font_size=12, label_font_size=12,spacing=1.0,diagonal_tick_labels=True,shade_gradient=[3.0],sigmas=[0, 1, 2,3], shade_alpha=0.85, linewidths=2, summary=False, cloud=True)
-    fig = cc.plotter.plot(figsize=args.fig_size,legend=False)
-    fig.set_size_inches(8 + fig.get_size_inches())
-    fig.savefig(args.device, transparency=True)        
+    clr = "#5F9EA0" #cadetblue
+    #clr = "#6199AE" #steel blue
+    cc.configure(max_ticks=3,colors=clr, tick_font_size=14, label_font_size=12,spacing=1.0,diagonal_tick_labels=True,
+        contour_labels='confidence', contour_label_font_size=14, shade_gradient=[3.0],sigmas=[1,2,3], shade_alpha=0.6, linewidths=1.5, summary=False,sigma2d=True)
+    fig = cc.plotter.plot(figsize=args.fig_size,legend=False, filename=args.device)
+    axes = np.array(fig.axes).reshape(len(params), len(params))
+    for ax in axes[-1, :]:
+        offset = ax.get_xaxis().get_offset_text()
+        print("{0} {1}".format(ax.get_xlabel(), "[{0}]".format(offset.get_text())))
+        ax.set_xlabel("{0} \n {1}".format(ax.get_xlabel(), "[{0}]".format(offset.get_text()) if offset.get_text() else ""))
+        offset.set_visible(False)
+    for ax in axes[:, 0]:
+        offset = ax.get_yaxis().get_offset_text()
+        ax.set_ylabel("{0} \n {1}".format(ax.get_ylabel(), "[{0}]".format(offset.get_text()) if offset.get_text() else ""))
+        offset.set_visible(False)
+    fig.set_size_inches(2* fig.get_size_inches())
+    fig.savefig(args.device)        
 
 
 
