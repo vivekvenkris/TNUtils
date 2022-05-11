@@ -106,7 +106,7 @@ else:
 
     # Get all the parameter names
     param_names_file = str(os.path.join(results_dir,prefix+'-.paramnames'))
-    col_names = [x.split()[1] for x in open(param_names_file).read().splitlines()]
+    col_names = [x.split()[0] for x in open(param_names_file).read().splitlines()]
     col_names.append("Likelihood")
 
     arg_cols = [i for i, e in enumerate(col_names)]
