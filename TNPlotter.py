@@ -189,7 +189,7 @@ else:
             print(s,analysis_summary[s])
 
         print(cc.analysis.get_correlation_table(chain=0,caption='Parameter Correlations', label='tab:parameter_correlations'))
-        print(c.analysis.get_latex_table())
+        print(cc.analysis.get_latex_table())
 
     params = col_names
     clr = "#5F9EA0" #cadetblue
